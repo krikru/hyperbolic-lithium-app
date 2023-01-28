@@ -3,6 +3,11 @@
 #include "gltinyobjloader.h"
 #include "glsimplecamera.h"
 
+using attr = lithium::VertexArrayBuffer::AttributeType;
+static constexpr attr POSITION{attr::VEC3};
+static constexpr attr NORMAL{attr::VEC3};
+static constexpr attr UV{attr::VEC2};
+
 class BasicPipeline : public lithium::RenderPipeline
 {
 public:
@@ -13,7 +18,7 @@ public:
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glLineWidth(3.0f);
-        _screenMesh = new lithium::Mesh({
+        _screenMesh = new lithium::Mesh({attr::VEC3, attr::VEC3, attr::VEC2}, {
             -1.0, -1.0, 0.0f, 	0.0f, 1.0f, 0.0f,	0.0f, 0.0f,
             -1.0,  1.0, 0.0f, 	0.0f, 1.0f, 0.0f,	0.0f, 1.0,
             1.0,  1.0, 0.0f,	0.0f, 1.0f, 0.0f,	1.0, 1.0,
@@ -22,8 +27,8 @@ public:
         {
             0, 2, 1,
             0, 3, 2
-        }, lithium::Mesh::State::POS_NORMAL_UV);
-        _mesh = lithium::tinyobjloader_load("assets/block.obj", lithium::Mesh::State::POS_NORMAL_UV);
+        });
+        _mesh = lithium::tinyobjloader_load("assets/block.obj", {POSITION, NORMAL, UV});
         _blockShader = new lithium::ShaderProgram("assets/blockshader.vert", "assets/blockshader.frag");
         _blockShader->setUniform("u_texture_0", 0);
         _blockShader->setUniform("u_projection", _camera->projection());
@@ -67,11 +72,11 @@ public:
         _blockShader->setUniform("u_view", _camera->view());
         _borderShader->setUniform("u_view", _camera->view());
         _screenShader->use();
-        _screenMesh->bindVertexArray();
+        _screenMesh->bind();
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         glActiveTexture(GL_TEXTURE0);
         glDepthMask(GL_FALSE);
-        _screenMesh->drawElements();
+        _screenMesh->draw();
         glDepthMask(GL_TRUE);
         std::for_each(_objects.begin(), _objects.end(), [this](lithium::Object* o) {
             o->setScale(1.0f);
