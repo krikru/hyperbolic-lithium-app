@@ -1,7 +1,11 @@
+// Third party includes
 #include "glapplication.h"
 #include "glrenderpipeline.h"
 #include "gltinyobjloader.h"
 #include "glsimplecamera.h"
+
+// Own includes
+//#include "hyperbolicmath.h"
 
 using attr = lithium::VertexArrayBuffer::AttributeType;
 static constexpr attr POSITION{attr::VEC3};
@@ -10,7 +14,7 @@ static constexpr attr UV{attr::VEC2};
 static constexpr attr COLOR{attr::VEC3};
 
 class BasicPipeline : public lithium::RenderPipeline
-{
+{   
 public:
     BasicPipeline(const glm::ivec2& resolution) : lithium::RenderPipeline{resolution},
         _camera{new lithium::SimpleCamera(glm::perspective(glm::radians(45.0f), (float)resolution.x / (float)resolution.y, 0.1f, 100.0f))}
@@ -131,6 +135,8 @@ private:
 
 int main(int argc, const char* argv[])
 {
+    //PoincareBallGyroVector3D<double, -0.0001> gyroVectorTest([1.0, 2.0, 3.0]);
+
     BasicApp* basicApp = new BasicApp();
     basicApp->run();
     return 0;
