@@ -5,7 +5,7 @@
 #include "glsimplecamera.h"
 
 // Own includes
-//#include "hyperbolicmath.h"
+#include "hyperbolicmath.h"
 
 using attr = lithium::VertexArrayBuffer::AttributeType;
 static constexpr attr POSITION{attr::VEC3};
@@ -91,7 +91,7 @@ private:
 class BasicApp : public lithium::Application
 {
 public:
-    BasicApp() : Application{"A simple application", glm::ivec2{600}, lithium::Application::Mode::DEFAULT, false}
+    BasicApp() : Application{"A simple application", glm::ivec2{1600, 900}, lithium::Application::Mode::DEFAULT, false}
     {
         _mesh = lithium::tinyobjloader_load("assets/block.obj", {POSITION, NORMAL, UV});
         _diffuseTexture.reset(lithium::ImageTexture::load("assets/Kraxbox_logo_lithium_metal_2ff2069c-b84a-426c-bf92-e9831105a5df.png", GL_SRGB, GL_RGB, GL_LINEAR, GL_REPEAT));
@@ -133,9 +133,15 @@ private:
     std::shared_ptr<lithium::ImageTexture> _diffuseTexture;
 };
 
+constexpr double radius = 20;
+constexpr double curvature = -1/(radius*radius);
+
 int main(int argc, const char* argv[])
 {
-    //PoincareBallGyroVector3D<double, -0.0001> gyroVectorTest([1.0, 2.0, 3.0]);
+    HyperboloidGyroVector3D<double, curvature> gyroVectorTest1();
+    HyperboloidGyroVector3D<double, curvature> gyroVectorTest2(1.0, 2.0, 3.0);
+    HyperboloidGyroVector3D<double, curvature> gyroVectorTest3(0.0, 0.0, 0.0, 1.0);
+    HyperboloidGyroVector3D<double, curvature> gyroVectorTest4(gyroVectorTest3);
 
     BasicApp* basicApp = new BasicApp();
     basicApp->run();
